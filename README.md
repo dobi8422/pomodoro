@@ -2,6 +2,7 @@
 ## Demo:
 https://dobi8422.github.io/pomodoro/
 ![](https://i.postimg.cc/FFTvBCrJ/image.png)
+設定介面
 ![](https://i.postimg.cc/T2WWY0mH/3.png)
 ---
 ## 功能
