@@ -1,5 +1,7 @@
 <template>
   <div id="MainBlock" class="row d-flex justify-content-center" :class="theme_background">
+    <!-- alertMessage -->
+    <div class="message position-fixed" v-if="message">{{ message }}</div>
     <!-- operator -->
     <div class="col-11 col-sm-10 col-md-8 col-lg-6 col-xl-4 col-xxl-3 mt-3">
       <div class="input d-flex justify-content-between rounded-pill" :class="theme_bg_color1">
@@ -209,7 +211,8 @@ export default {
       work_time: true,
       label: '',
       quick_delete: false,
-      all_list: []
+      all_list: [],
+      message: ''
     }
   },
   methods: {
@@ -222,14 +225,13 @@ export default {
       this.timing = setInterval(() => {
         this.countdown()
       }, 1000)
-      console.log('play music: ', this.now_music.name)
+      this.messagePost(`計時開始：${this.doingName}，music：${this.now_music.name}`)
     },
     timing_pause () {
       this.start = true
       this.pause = true
       clearInterval(this.timing)
       this.$refs.audio.pause()
-      console.log('timing_pause')
     },
     countdown () {
       if (this.now_time[1] !== 0) {
@@ -252,7 +254,7 @@ export default {
       this.$refs.audio.pause()
       this.$refs.audio.currentTime = 0
       this.work_time = !this.work_time
-      console.log('timing_done')
+      this.messagePost(`恭喜完成：${this.doingName}`)
     },
     timing_restart () {
       this.start = false
@@ -266,7 +268,7 @@ export default {
       } else {
         this.now_time = JSON.parse(JSON.stringify(this.setting_time[1]))
       }
-      console.log('timing_restart')
+      this.messagePost(`重新開始：${this.doingName}`)
     },
     change_time () {
       if (this.work_time) {
@@ -274,21 +276,25 @@ export default {
       } else {
         this.now_time = JSON.parse(JSON.stringify(this.setting_time[1]))
       }
-      console.log('change_time')
+      const str1 = this.now_time[0] < 10 ? '0' + this.now_time[0] : this.now_time[0]
+      const str2 = this.now_time[1] < 10 ? '0' + this.now_time[1] : this.now_time[1]
+      this.messagePost(`設定時間：${str1}:${str2}`)
     },
     effect_sound () {
       if (this.notice_sound) {
         this.$refs.notice.play()
-        setTimeout(() => {
-          this.$refs.notice.pause()
-          console.log('time is over')
-        }, 3000)
+        setTimeout(() => { this.$refs.notice.pause() }, 3000)
       }
     },
     // todilist
     add_todo () {
       const content = this.input_todo.trim()
       if (!content) { return }
+      if (this.todo_list.find(item => { return item.content === content })) {
+        this.messagePost(`已經有 ${content} 了`)
+        this.input_todo = ''
+        return
+      }
       const now = new Date()
       this.all_list.push({
         content: content,
@@ -297,9 +303,7 @@ export default {
         completed_time: '',
         isdeleted: false
       })
-      if (!this.start) {
-        this.doingName = content
-      }
+      if (!this.start) { this.doingName = content }
       this.input_todo = ''
     },
     change_todo (item) {
@@ -307,7 +311,6 @@ export default {
         if (!this.start) {
           this.doingName = item.content
         } else {
-          console.log('you are doing something')
           if (confirm('您正在執行其他任務，確定更換任務內容？')) {
             this.doingName = item.content
             this.timing_restart()
@@ -347,6 +350,10 @@ export default {
           item.isdeleted = false
         })
       }
+    },
+    messagePost (text) {
+      this.message = text
+      setTimeout(() => { this.message = '' }, 2500)
     }
   },
   computed: {
@@ -414,5 +421,18 @@ input[type=number]::-webkit-inner-spin-button {
 }
 .hover_div:hover{
   color: rgb(63, 100, 179);
+}
+.message{
+  background: rgba(0, 0, 0, 0.5);
+  vertical-align: text-bottom;
+  color: white;
+  z-index: 100;
+  height: auto;
+  width: auto;
+  top: 320px;
+  backdrop-filter: blur(4px);
+  padding: 10px 10px;
+  border-radius: 20px;
+  border: 2px rgba(255, 255, 255, 0.5) solid;
 }
 </style>
