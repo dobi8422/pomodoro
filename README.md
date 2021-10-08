@@ -10,6 +10,10 @@ https://dobi8422.github.io/pomodoro/
 番茄鐘計時，音樂，鬧鐘，切換主題(背景,按鈕顏色)
 
 ---
+## 完成優化
+避免重複內容登入
+
+---
 ## 新的問題，已解決
 1. 刪除時 無法將doingName = ''(li,div上下層重複觸發)(@click.stop,@click.capture)=>資料刪除後如何將元素重新渲染(改變一項資料使畫面更新(可能是因為stop導致畫面沒更新))
 2. 音源 :src 故障->requirse
